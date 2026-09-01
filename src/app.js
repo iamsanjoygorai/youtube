@@ -4,6 +4,7 @@ import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
 import testRoutes from "./routes/test.routes.js";
 import videoRoutes from "./routes/video.routes.js";
+import likeRoutes from "./routes/like.routes.js";
 
 const app = express();
 
@@ -24,7 +25,6 @@ message: "YouTube Clone API is running",
 });
 });
 
-app.use("/api/auth", authRoutes);
 
 app.get("/api/test-video", (req, res) => {
 res.json({
@@ -33,6 +33,8 @@ message: "This is the current app.js",
 });
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/videos", videoRoutes);
+app.use("/api/videos", likeRoutes);
 
 export default app;
