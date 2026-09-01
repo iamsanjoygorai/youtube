@@ -131,3 +131,58 @@ export const getComments = async (req, res) => {
     });
   }
 };
+
+
+// DELETE /api/comments/:id
+export const deleteComment = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (Number.isNaN(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid comment ID",
+      });
+    }
+
+    const comment = await prisma.comment.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        message: "Comment not found",
+      });
+    }
+
+    // Check ownership
+    if (comment.userId !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not allowed to delete this comment",
+      });
+    }
+
+    await prisma.comment.delete({
+      where: {
+        id,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Comment deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete comment error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete comment",
+      error: error.message,
+    });
+  }
+};
