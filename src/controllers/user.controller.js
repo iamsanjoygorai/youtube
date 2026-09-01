@@ -24,7 +24,6 @@ export const getUserProfile = async (req, res) => {
       select: {
         id: true,
         username: true,
-        email: true,
         avatarUrl: true,
         createdAt: true,
 
@@ -33,6 +32,7 @@ export const getUserProfile = async (req, res) => {
             videos: true,
             comments: true,
             likes: true,
+            subscribers: true,
           },
         },
       },
@@ -45,18 +45,34 @@ export const getUserProfile = async (req, res) => {
       });
     }
 
+    let isSubscribed = false;
+
+    if (req.user?.id) {
+      const subscription = await prisma.subscription.findUnique({
+        where: {
+          subscriberId_creatorId: {
+            subscriberId: req.user.id,
+            creatorId: id,
+          },
+        },
+      });
+
+      isSubscribed = !!subscription;
+    }
+
     return res.status(200).json({
       success: true,
       data: {
         user: {
           id: user.id,
           username: user.username,
-          email: user.email,
           avatarUrl: user.avatarUrl,
           createdAt: user.createdAt,
           videoCount: user._count.videos,
           commentCount: user._count.comments,
           likeCount: user._count.likes,
+          subscriberCount: user._count.subscribers,
+          isSubscribed,
         },
       },
     });

@@ -17,9 +17,11 @@ model User {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  videos   Video[]
-  comments Comment[]
-  likes    Like[]
+  videos        Video[]
+  comments      Comment[]
+  likes         Like[]
+  subscriptions Subscription[] @relation("UserSubscriptions")
+  subscribers   Subscription[] @relation("UserSubscribers")
 }
 
 model Video {
@@ -71,4 +73,18 @@ model Like {
 
   @@unique([userId, videoId])
   @@index([videoId])
+}
+
+model Subscription {
+  id           Int      @id @default(autoincrement())
+  subscriberId Int
+  creatorId    Int
+  createdAt    DateTime @default(now())
+
+  subscriber User @relation("UserSubscriptions", fields: [subscriberId], references: [id], onDelete: Cascade)
+  creator    User @relation("UserSubscribers", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@unique([subscriberId, creatorId])
+  @@index([subscriberId])
+  @@index([creatorId])
 }

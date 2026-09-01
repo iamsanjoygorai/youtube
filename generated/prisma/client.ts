@@ -61,3 +61,8 @@ export type Comment = Prisma.CommentModel
  * 
  */
 export type Like = Prisma.LikeModel
+/**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel
