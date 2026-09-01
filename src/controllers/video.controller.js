@@ -79,16 +79,51 @@ export const getVideos = async (req, res) => {
             avatarUrl: true,
           },
         },
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
       },
     });
 
+    const userId = req.user?.id || null;
+
+    const videosWithStats = await Promise.all(
+      videos.map(async (video) => {
+        let isLiked = false;
+
+        if (userId) {
+          const like = await prisma.like.findUnique({
+            where: {
+              userId_videoId: {
+                userId,
+                videoId: video.id,
+              },
+            },
+          });
+
+          isLiked = !!like;
+        }
+
+        return {
+          ...video,
+          likeCount: video._count.likes,
+          commentCount: video._count.comments,
+          isLiked,
+          _count: undefined,
+        };
+      })
+    );
+
     return res.status(200).json({
       success: true,
-      count: videos.length,
-      data: videos,
+      count: videosWithStats.length,
+      data: videosWithStats,
     });
   } catch (error) {
     console.error("Get videos error:", error);
@@ -126,6 +161,12 @@ export const getVideoById = async (req, res) => {
             avatarUrl: true,
           },
         },
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
       },
     });
 
@@ -136,10 +177,35 @@ export const getVideoById = async (req, res) => {
       });
     }
 
+    const userId = req.user?.id || null;
+
+    let isLiked = false;
+
+    if (userId) {
+      const like = await prisma.like.findUnique({
+        where: {
+          userId_videoId: {
+            userId,
+            videoId: id,
+          },
+        },
+      });
+
+      isLiked = !!like;
+    }
+
+    const videoWithStats = {
+      ...video,
+      likeCount: video._count.likes,
+      commentCount: video._count.comments,
+      isLiked,
+      _count: undefined,
+    };
+
     return res.status(200).json({
       success: true,
       data: {
-        video,
+        video: videoWithStats,
       },
     });
   } catch (error) {
