@@ -8,13 +8,14 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  avatarUrl String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  username       String   @unique
+  email          String   @unique
+  password       String
+  avatarUrl      String?
+  avatarPublicId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   videos   Video[]
   comments Comment[]

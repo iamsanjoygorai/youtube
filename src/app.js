@@ -6,6 +6,7 @@ import testRoutes from "./routes/test.routes.js";
 import videoRoutes from "./routes/video.routes.js";
 import likeRoutes from "./routes/like.routes.js";
 import commentRoutes from "./routes/comment.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 const app = express();
 
@@ -38,5 +39,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/videos", likeRoutes);
 app.use("/api", commentRoutes);
+app.use("/api/users", userRoutes);
 
 export default app;
