@@ -67,3 +67,57 @@ export const likeVideo = async (req, res) => {
     });
   }
 };
+
+
+
+// DELETE /api/videos/:id/like
+export const unlikeVideo = async (req, res) => {
+  try {
+    const videoId = Number(req.params.id);
+
+    if (Number.isNaN(videoId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid video ID",
+      });
+    }
+
+    const existingLike = await prisma.like.findUnique({
+      where: {
+        userId_videoId: {
+          userId: req.user.id,
+          videoId,
+        },
+      },
+    });
+
+    if (!existingLike) {
+      return res.status(404).json({
+        success: false,
+        message: "Video is not liked yet",
+      });
+    }
+
+    await prisma.like.delete({
+      where: {
+        userId_videoId: {
+          userId: req.user.id,
+          videoId,
+        },
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Video unliked successfully",
+    });
+  } catch (error) {
+    console.error("Unlike video error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to unlike video",
+      error: error.message,
+    });
+  }
+};
