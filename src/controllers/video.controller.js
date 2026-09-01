@@ -4,6 +4,7 @@ import {
   uploadVideo,
   uploadThumbnail,
   deleteVideoFromCloudinary,
+  deleteThumbnailFromCloudinary,
 } from "../services/video.service.js";
 
 // POST /api/videos
@@ -212,3 +213,90 @@ export const deleteVideo = async (req, res) => {
 };
 
 
+// PUT /api/videos/:id
+export const updateVideo = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (Number.isNaN(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid video ID",
+      });
+    }
+
+    const video = await prisma.video.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!video) {
+      return res.status(404).json({
+        success: false,
+        message: "Video not found",
+      });
+    }
+
+    // Check ownership
+    if (video.userId !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not allowed to update this video",
+      });
+    }
+
+    const { title, description } = req.body;
+
+    const updateData = {};
+
+    if (title !== undefined) {
+      updateData.title = title;
+    }
+
+    if (description !== undefined) {
+      updateData.description = description;
+    }
+
+    // Handle new thumbnail
+    const thumbnailFile = req.files?.thumbnail?.[0];
+
+    if (thumbnailFile) {
+      // Delete old thumbnail from Cloudinary
+      if (video.thumbnailPublicId) {
+        await deleteThumbnailFromCloudinary(video.thumbnailPublicId);
+      }
+
+      // Upload new thumbnail
+      const uploadedThumbnail = await uploadThumbnail(
+        thumbnailFile.buffer
+      );
+
+      updateData.thumbnailUrl = uploadedThumbnail.secure_url;
+      updateData.thumbnailPublicId = uploadedThumbnail.public_id;
+    }
+
+    const updatedVideo = await prisma.video.update({
+      where: {
+        id,
+      },
+      data: updateData,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Video updated successfully",
+      data: {
+        video: updatedVideo,
+      },
+    });
+  } catch (error) {
+    console.error("Update video error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update video",
+      error: error.message,
+    });
+  }
+};
