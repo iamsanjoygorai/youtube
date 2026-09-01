@@ -1,0 +1,39 @@
+{
+   "name": "youtube-clone-backend",
+   "version": "1.0.0",
+   "description": "Backend API for a YouTube-like video sharing platform",
+   "type": "module",
+   "scripts": {
+      "dev": "nodemon --exec tsx src/server.js",
+      "start": "tsx src/server.js",
+      "prisma:generate": "prisma generate",
+      "prisma:migrate": "prisma migrate dev",
+      "prisma:studio": "prisma studio",
+      "postinstall": "prisma skills sync || exit 0"
+   },
+   "keywords": [],
+   "author": "",
+   "license": "ISC",
+   "dependencies": {
+      "@prisma/adapter-pg": "^7.10.0",
+      "@prisma/client": "^7.10.0",
+      "bcrypt": "^6.0.0",
+      "cloudinary": "^2.11.0",
+      "cookie-parser": "^1.4.7",
+      "cors": "^2.8.6",
+      "dotenv": "^17.4.2",
+      "express": "^5.2.1",
+      "helmet": "^8.3.0",
+      "jsonwebtoken": "^9.0.3",
+      "mongoose": "^9.9.4",
+      "morgan": "^1.12.0",
+      "multer": "^2.3.0",
+      "pg": "^8.23.0",
+      "prisma": "^7.10.0",
+      "zod": "^4.5.4"
+   },
+   "devDependencies": {
+      "nodemon": "^3.1.14",
+      "tsx": "^4.23.13"
+   }
+}
