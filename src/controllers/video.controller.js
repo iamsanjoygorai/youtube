@@ -522,52 +522,60 @@ export const getHomeFeed = async (req, res) => {
     // ==========================================
     // ANONYMOUS USER
     // ==========================================
+
     if (!userId) {
       const skip = (page - 1) * limit;
 
-      const [totalVideos, videos] = await prisma.$transaction([
-        prisma.video.count(),
+      const [totalVideos, videos] =
+        await prisma.$transaction([
+          prisma.video.count(),
 
-        prisma.video.findMany({
-          skip,
-          take: limit,
+          prisma.video.findMany({
+            skip,
+            take: limit,
 
-          include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                avatarUrl: true,
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                  avatarUrl: true,
+                },
+              },
+
+              _count: {
+                select: {
+                  likes: true,
+                  comments: true,
+                },
               },
             },
 
-            _count: {
-              select: {
-                likes: true,
-                comments: true,
+            orderBy: [
+              {
+                views: "desc",
               },
-            },
-          },
+              {
+                createdAt: "desc",
+              },
+            ],
+          }),
+        ]);
 
-          orderBy: [
-            {
-              views: "desc",
-            },
-            {
-              createdAt: "desc",
-            },
-          ],
-        }),
-      ]);
+      const videosWithStats = videos.map(
+        (video) => ({
+          ...video,
 
-      const videosWithStats = videos.map((video) => ({
-        ...video,
-        viewCount: video.views,
-        likeCount: video._count.likes,
-        commentCount: video._count.comments,
-        isLiked: false,
-        _count: undefined,
-      }));
+          viewCount: video.views,
+          likeCount: video._count.likes,
+          commentCount:
+            video._count.comments,
+
+          isLiked: false,
+
+          _count: undefined,
+        })
+      );
 
       const totalPages = Math.ceil(
         totalVideos / limit
@@ -575,7 +583,9 @@ export const getHomeFeed = async (req, res) => {
 
       return res.status(200).json({
         success: true,
+
         count: videosWithStats.length,
+
         data: videosWithStats,
 
         pagination: {
@@ -583,15 +593,18 @@ export const getHomeFeed = async (req, res) => {
           limit,
           totalVideos,
           totalPages,
-          hasNextPage: page < totalPages,
-          hasPreviousPage: page > 1,
+          hasNextPage:
+            page < totalPages,
+          hasPreviousPage:
+            page > 1,
         },
       });
     }
 
     // ==========================================
-    // GET SUBSCRIPTIONS
+    // GET USER SUBSCRIPTIONS
     // ==========================================
+
     const subscriptions =
       await prisma.subscription.findMany({
         where: {
@@ -605,44 +618,49 @@ export const getHomeFeed = async (req, res) => {
 
     const subscribedCreatorIds =
       subscriptions.map(
-        (subscription) => subscription.creatorId
+        (subscription) =>
+          subscription.creatorId
       );
 
     // ==========================================
     // GET WATCH HISTORY
     // ==========================================
-    const history = await prisma.history.findMany({
-      where: {
-        userId,
-      },
 
-      select: {
-        videoId: true,
+    const history =
+      await prisma.history.findMany({
+        where: {
+          userId,
+        },
 
-        video: {
-          select: {
-            userId: true,
-            title: true,
-            description: true,
+        select: {
+          videoId: true,
+
+          video: {
+            select: {
+              userId: true,
+              title: true,
+              description: true,
+            },
           },
         },
-      },
 
-      orderBy: {
-        watchedAt: "desc",
-      },
+        orderBy: {
+          watchedAt: "desc",
+        },
 
-      take: 100,
-    });
+        take: 100,
+      });
 
-    const watchedVideoIds = history.map(
-      (item) => item.videoId
-    );
+    const watchedVideoIds =
+      history.map(
+        (item) => item.videoId
+      );
 
     const watchedCreatorIds = [
       ...new Set(
         history.map(
-          (item) => item.video.userId
+          (item) =>
+            item.video.userId
         )
       ),
     ];
@@ -672,6 +690,8 @@ export const getHomeFeed = async (req, res) => {
       "about",
       "using",
       "use",
+      "new",
+      "the",
       "a",
       "an",
       "to",
@@ -686,7 +706,6 @@ export const getHomeFeed = async (req, res) => {
       "by",
       "be",
       "can",
-      "new",
     ]);
 
     const keywordFrequency = {};
@@ -697,17 +716,14 @@ export const getHomeFeed = async (req, res) => {
         ${item.video.description || ""}
       `.toLowerCase();
 
-      const words = text.match(
-        /[a-z0-9]+/g
-      ) || [];
+      const words =
+        text.match(/[a-z0-9]+/g) || [];
 
       for (const word of words) {
-        // Ignore very short words
         if (word.length < 3) {
           continue;
         }
 
-        // Ignore common words
         if (stopWords.has(word)) {
           continue;
         }
@@ -717,138 +733,208 @@ export const getHomeFeed = async (req, res) => {
       }
     }
 
-    // Keep the strongest 30 interests
-    const userKeywords = Object.entries(
-      keywordFrequency
-    )
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 30)
-      .map(([keyword]) => keyword);
+    // Keep strongest 30 interests
+    const userKeywords =
+      Object.entries(
+        keywordFrequency
+      )
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 30)
+        .map(([keyword]) => keyword);
 
     // ==========================================
     // GET CANDIDATE VIDEOS
     // ==========================================
-    const videos = await prisma.video.findMany({
-      where: {
-        NOT: {
-          id: {
-            in: watchedVideoIds,
-          },
-        },
-      },
 
-      include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            avatarUrl: true,
+    const videos =
+      await prisma.video.findMany({
+        where: {
+          NOT: {
+            id: {
+              in: watchedVideoIds,
+            },
           },
         },
 
-        _count: {
-          select: {
-            likes: true,
-            comments: true,
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              avatarUrl: true,
+            },
+          },
+
+          _count: {
+            select: {
+              likes: true,
+              comments: true,
+            },
           },
         },
-      },
-    });
+      });
 
     // ==========================================
     // CALCULATE RECOMMENDATION SCORE
     // ==========================================
+
     const now = Date.now();
 
-    const rankedVideos = videos.map((video) => {
-      let score = 0;
+    const rankedVideos =
+      videos.map((video) => {
+        let score = 0;
 
-      // ------------------------------------------
-      // 1. SUBSCRIBED CREATOR
-      // ------------------------------------------
-      if (
-        subscribedCreatorIds.includes(
-          video.userId
-        )
-      ) {
-        score += 1000;
-      }
+        // --------------------------------------
+        // SUBSCRIBED CREATOR
+        // --------------------------------------
 
-      // ------------------------------------------
-      // 2. CREATOR FROM WATCH HISTORY
-      // ------------------------------------------
-      if (
-        watchedCreatorIds.includes(
-          video.userId
-        )
-      ) {
-        score += 300;
-      }
-
-      // ------------------------------------------
-      // 3. CONTENT MATCH
-      // ------------------------------------------
-      const videoText = `
-        ${video.title || ""}
-        ${video.description || ""}
-      `.toLowerCase();
-
-      let matchingKeywords = 0;
-
-      for (const keyword of userKeywords) {
-        if (videoText.includes(keyword)) {
-          matchingKeywords++;
+        if (
+          subscribedCreatorIds.includes(
+            video.userId
+          )
+        ) {
+          score += 1000;
         }
-      }
 
-      score += matchingKeywords * 50;
+        // --------------------------------------
+        // CREATOR FROM WATCH HISTORY
+        // --------------------------------------
 
-      // ------------------------------------------
-      // 4. POPULARITY
-      // ------------------------------------------
-      score +=
-        Math.log10(video.views + 1) * 100;
+        if (
+          watchedCreatorIds.includes(
+            video.userId
+          )
+        ) {
+          score += 300;
+        }
 
-      // ------------------------------------------
-      // 5. FRESHNESS
-      // ------------------------------------------
-      const ageInHours =
-        (now -
-          new Date(video.createdAt).getTime()) /
-        (1000 * 60 * 60);
+        // --------------------------------------
+        // CONTENT MATCH
+        // --------------------------------------
 
-      if (ageInHours < 24) {
-        score += 200;
-      } else if (ageInHours < 72) {
-        score += 100;
-      } else if (ageInHours < 168) {
-        score += 50;
-      }
+        const videoText = `
+          ${video.title || ""}
+          ${video.description || ""}
+        `.toLowerCase();
 
-      return {
-        video,
-        score,
-        matchingKeywords,
-      };
-    });
+        let matchingKeywords = 0;
+
+        for (const keyword of userKeywords) {
+          if (
+            videoText.includes(keyword)
+          ) {
+            matchingKeywords++;
+          }
+        }
+
+        score +=
+          matchingKeywords * 50;
+
+        // --------------------------------------
+        // POPULARITY
+        // --------------------------------------
+
+        score +=
+          Math.log10(
+            video.views + 1
+          ) * 100;
+
+        // --------------------------------------
+        // FRESHNESS
+        // --------------------------------------
+
+        const ageInHours =
+          (now -
+            new Date(
+              video.createdAt
+            ).getTime()) /
+          (1000 * 60 * 60);
+
+        if (ageInHours < 24) {
+          score += 200;
+        } else if (
+          ageInHours < 72
+        ) {
+          score += 100;
+        } else if (
+          ageInHours < 168
+        ) {
+          score += 50;
+        }
+
+        return {
+          video,
+          score,
+          matchingKeywords,
+        };
+      });
 
     // ==========================================
-    // SORT BY SCORE
+    // SORT BY ORIGINAL SCORE
     // ==========================================
-    rankedVideos.sort((a, b) => {
-      return b.score - a.score;
-    });
+
+    rankedVideos.sort(
+      (a, b) => b.score - a.score
+    );
+
+    // ==========================================
+    // CREATOR DIVERSITY
+    // ==========================================
+
+    const creatorCount = {};
+
+    const diversifiedVideos =
+      rankedVideos.map((item) => {
+        const creatorId =
+          item.video.userId;
+
+        const count =
+          creatorCount[creatorId] || 0;
+
+        let diversityPenalty = 0;
+
+        if (count === 1) {
+          diversityPenalty = 150;
+        } else if (count === 2) {
+          diversityPenalty = 300;
+        } else if (count >= 3) {
+          diversityPenalty = 500;
+        }
+
+        creatorCount[creatorId] =
+          count + 1;
+
+        return {
+          ...item,
+
+          adjustedScore:
+            item.score -
+            diversityPenalty,
+        };
+      });
+
+    // ==========================================
+    // SORT BY DIVERSITY-ADJUSTED SCORE
+    // ==========================================
+
+    diversifiedVideos.sort(
+      (a, b) =>
+        b.adjustedScore -
+        a.adjustedScore
+    );
 
     // ==========================================
     // PAGINATION
     // ==========================================
-    const totalVideos =
-      rankedVideos.length;
 
-    const skip = (page - 1) * limit;
+    const totalVideos =
+      diversifiedVideos.length;
+
+    const skip =
+      (page - 1) * limit;
 
     const paginatedVideos =
-      rankedVideos.slice(
+      diversifiedVideos.slice(
         skip,
         skip + limit
       );
@@ -856,6 +942,7 @@ export const getHomeFeed = async (req, res) => {
     // ==========================================
     // ADD LIKE STATUS
     // ==========================================
+
     const videosWithStats =
       await Promise.all(
         paginatedVideos.map(
@@ -865,7 +952,8 @@ export const getHomeFeed = async (req, res) => {
                 where: {
                   userId_videoId: {
                     userId,
-                    videoId: video.id,
+                    videoId:
+                      video.id,
                   },
                 },
               });
@@ -873,19 +961,30 @@ export const getHomeFeed = async (req, res) => {
             return {
               ...video,
 
-              viewCount: video.views,
+              viewCount:
+                video.views,
+
               likeCount:
-                video._count.likes,
+                video._count
+                  .likes,
+
               commentCount:
-                video._count.comments,
+                video._count
+                  .comments,
 
-              isLiked: !!like,
+              isLiked:
+                !!like,
 
-              _count: undefined,
+              _count:
+                undefined,
             };
           }
         )
       );
+
+    // ==========================================
+    // PAGINATION INFO
+    // ==========================================
 
     const totalPages =
       Math.ceil(
@@ -895,20 +994,25 @@ export const getHomeFeed = async (req, res) => {
     // ==========================================
     // RESPONSE
     // ==========================================
+
     return res.status(200).json({
       success: true,
 
-      count: videosWithStats.length,
+      count:
+        videosWithStats.length,
 
-      data: videosWithStats,
+      data:
+        videosWithStats,
 
       pagination: {
         page,
         limit,
         totalVideos,
         totalPages,
+
         hasNextPage:
           page < totalPages,
+
         hasPreviousPage:
           page > 1,
       },
@@ -921,8 +1025,10 @@ export const getHomeFeed = async (req, res) => {
 
     return res.status(500).json({
       success: false,
+
       message:
         "Failed to fetch home feed",
+
       error: error.message,
     });
   }
