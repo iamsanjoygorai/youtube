@@ -517,61 +517,241 @@ export const getHomeFeed = async (req, res) => {
       50
     );
 
-    const skip = (page - 1) * limit;
+    const userId = req.user?.id || null;
 
-    const [totalVideos, videos] = await prisma.$transaction([
-      prisma.video.count(),
+    // -----------------------------------
+    // Anonymous user
+    // -----------------------------------
+    if (!userId) {
+      const skip = (page - 1) * limit;
 
-      prisma.video.findMany({
-        skip,
-        take: limit,
+      const [totalVideos, videos] = await prisma.$transaction([
+        prisma.video.count(),
 
-        include: {
-          user: {
-            select: {
-              id: true,
-              username: true,
-              avatarUrl: true,
+        prisma.video.findMany({
+          skip,
+          take: limit,
+
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                avatarUrl: true,
+              },
+            },
+
+            _count: {
+              select: {
+                likes: true,
+                comments: true,
+              },
             },
           },
 
-          _count: {
-            select: {
-              likes: true,
-              comments: true,
+          orderBy: [
+            {
+              views: "desc",
             },
+            {
+              createdAt: "desc",
+            },
+          ],
+        }),
+      ]);
+
+      const videosWithStats = videos.map((video) => ({
+        ...video,
+        viewCount: video.views,
+        likeCount: video._count.likes,
+        commentCount: video._count.comments,
+        isLiked: false,
+        _count: undefined,
+      }));
+
+      const totalPages = Math.ceil(
+        totalVideos / limit
+      );
+
+      return res.status(200).json({
+        success: true,
+        count: videosWithStats.length,
+        data: videosWithStats,
+
+        pagination: {
+          page,
+          limit,
+          totalVideos,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      });
+    }
+
+    // -----------------------------------
+    // Get user's subscriptions
+    // -----------------------------------
+    const subscriptions = await prisma.subscription.findMany({
+      where: {
+        subscriberId: userId,
+      },
+
+      select: {
+        creatorId: true,
+      },
+    });
+
+    const subscribedCreatorIds = subscriptions.map(
+      (subscription) => subscription.creatorId
+    );
+
+    // -----------------------------------
+    // Get user's watch history
+    // -----------------------------------
+    const history = await prisma.history.findMany({
+      where: {
+        userId,
+      },
+
+      select: {
+        videoId: true,
+
+        video: {
+          select: {
+            userId: true,
+          },
+        },
+      },
+
+      orderBy: {
+        watchedAt: "desc",
+      },
+
+      take: 100,
+    });
+
+    const watchedVideoIds = history.map(
+      (item) => item.videoId
+    );
+
+    const watchedCreatorIds = [
+      ...new Set(
+        history.map((item) => item.video.userId)
+      ),
+    ];
+
+    // -----------------------------------
+    // Get candidate videos
+    // -----------------------------------
+    const videos = await prisma.video.findMany({
+      where: {
+        NOT: {
+          id: {
+            in: watchedVideoIds,
+          },
+        },
+      },
+
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
           },
         },
 
-        orderBy: [
-          {
-            views: "desc",
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
           },
-          {
-            createdAt: "desc",
-          },
-        ],
-      }),
-    ]);
+        },
+      },
 
-    const userId = req.user?.id || null;
+      orderBy: [
+        {
+          views: "desc",
+        },
+        {
+          createdAt: "desc",
+        },
+      ],
+    });
 
+    // -----------------------------------
+    // Calculate recommendation score
+    // -----------------------------------
+    const now = Date.now();
+
+    const rankedVideos = videos.map((video) => {
+      let score = 0;
+
+      // 1. Subscribed channel
+      if (subscribedCreatorIds.includes(video.userId)) {
+        score += 1000;
+      }
+
+      // 2. Creator previously watched
+      if (watchedCreatorIds.includes(video.userId)) {
+        score += 300;
+      }
+
+      // 3. Popularity
+      score += Math.log10(video.views + 1) * 100;
+
+      // 4. Freshness
+      const ageInHours =
+        (now - new Date(video.createdAt).getTime()) /
+        (1000 * 60 * 60);
+
+      if (ageInHours < 24) {
+        score += 200;
+      } else if (ageInHours < 72) {
+        score += 100;
+      } else if (ageInHours < 168) {
+        score += 50;
+      }
+
+      return {
+        video,
+        score,
+      };
+    });
+
+    // -----------------------------------
+    // Sort by recommendation score
+    // -----------------------------------
+    rankedVideos.sort((a, b) => {
+      return b.score - a.score;
+    });
+
+    // -----------------------------------
+    // Pagination AFTER ranking
+    // -----------------------------------
+    const totalVideos = rankedVideos.length;
+
+    const skip = (page - 1) * limit;
+
+    const paginatedVideos = rankedVideos.slice(
+      skip,
+      skip + limit
+    );
+
+    // -----------------------------------
+    // Add like status
+    // -----------------------------------
     const videosWithStats = await Promise.all(
-      videos.map(async (video) => {
-        let isLiked = false;
-
-        if (userId) {
-          const like = await prisma.like.findUnique({
-            where: {
-              userId_videoId: {
-                userId,
-                videoId: video.id,
-              },
+      paginatedVideos.map(async ({ video }) => {
+        const like = await prisma.like.findUnique({
+          where: {
+            userId_videoId: {
+              userId,
+              videoId: video.id,
             },
-          });
-
-          isLiked = !!like;
-        }
+          },
+        });
 
         return {
           ...video,
@@ -579,7 +759,8 @@ export const getHomeFeed = async (req, res) => {
           viewCount: video.views,
           likeCount: video._count.likes,
           commentCount: video._count.comments,
-          isLiked,
+
+          isLiked: !!like,
 
           _count: undefined,
         };
@@ -592,7 +773,9 @@ export const getHomeFeed = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+
       count: videosWithStats.length,
+
       data: videosWithStats,
 
       pagination: {

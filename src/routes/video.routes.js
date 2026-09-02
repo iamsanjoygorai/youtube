@@ -34,7 +34,11 @@ router.post(
 router.get("/", getVideos);
 
 // Home feed
-router.get("/feed", getHomeFeed);
+router.get(
+  "/feed",
+  optionalAuthenticate,
+  getHomeFeed
+);
 
 
 router.post(
