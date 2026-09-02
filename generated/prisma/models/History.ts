@@ -266,8 +266,8 @@ export type HistoryScalarWhereWithAggregatesInput = {
 
 export type HistoryCreateInput = {
   watchedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutHistoriesInput
-  video: Prisma.VideoCreateNestedOneWithoutHistoriesInput
+  user: Prisma.UserCreateNestedOneWithoutHistoryInput
+  video: Prisma.VideoCreateNestedOneWithoutHistoryInput
 }
 
 export type HistoryUncheckedCreateInput = {
@@ -279,8 +279,8 @@ export type HistoryUncheckedCreateInput = {
 
 export type HistoryUpdateInput = {
   watchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutHistoriesNestedInput
-  video?: Prisma.VideoUpdateOneRequiredWithoutHistoriesNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutHistoryNestedInput
+  video?: Prisma.VideoUpdateOneRequiredWithoutHistoryNestedInput
 }
 
 export type HistoryUncheckedUpdateInput = {
@@ -442,7 +442,7 @@ export type HistoryUncheckedUpdateManyWithoutVideoNestedInput = {
 
 export type HistoryCreateWithoutUserInput = {
   watchedAt?: Date | string
-  video: Prisma.VideoCreateNestedOneWithoutHistoriesInput
+  video: Prisma.VideoCreateNestedOneWithoutHistoryInput
 }
 
 export type HistoryUncheckedCreateWithoutUserInput = {
@@ -489,7 +489,7 @@ export type HistoryScalarWhereInput = {
 
 export type HistoryCreateWithoutVideoInput = {
   watchedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutHistoriesInput
+  user: Prisma.UserCreateNestedOneWithoutHistoryInput
 }
 
 export type HistoryUncheckedCreateWithoutVideoInput = {
@@ -532,7 +532,7 @@ export type HistoryCreateManyUserInput = {
 
 export type HistoryUpdateWithoutUserInput = {
   watchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  video?: Prisma.VideoUpdateOneRequiredWithoutHistoriesNestedInput
+  video?: Prisma.VideoUpdateOneRequiredWithoutHistoryNestedInput
 }
 
 export type HistoryUncheckedUpdateWithoutUserInput = {
@@ -555,7 +555,7 @@ export type HistoryCreateManyVideoInput = {
 
 export type HistoryUpdateWithoutVideoInput = {
   watchedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutHistoriesNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutHistoryNestedInput
 }
 
 export type HistoryUncheckedUpdateWithoutVideoInput = {

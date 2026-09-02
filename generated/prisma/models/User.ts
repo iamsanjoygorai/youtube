@@ -46,6 +46,8 @@ export type UserMinAggregateOutputType = {
   avatarPublicId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  resetPasswordToken: string | null
+  resetPasswordTokenExpiry: Date | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -60,6 +62,8 @@ export type UserMaxAggregateOutputType = {
   avatarPublicId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  resetPasswordToken: string | null
+  resetPasswordTokenExpiry: Date | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -74,6 +78,8 @@ export type UserCountAggregateOutputType = {
   avatarPublicId: number
   createdAt: number
   updatedAt: number
+  resetPasswordToken: number
+  resetPasswordTokenExpiry: number
   _all: number
 }
 
@@ -98,6 +104,8 @@ export type UserMinAggregateInputType = {
   avatarPublicId?: true
   createdAt?: true
   updatedAt?: true
+  resetPasswordToken?: true
+  resetPasswordTokenExpiry?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -112,6 +120,8 @@ export type UserMaxAggregateInputType = {
   avatarPublicId?: true
   createdAt?: true
   updatedAt?: true
+  resetPasswordToken?: true
+  resetPasswordTokenExpiry?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -126,6 +136,8 @@ export type UserCountAggregateInputType = {
   avatarPublicId?: true
   createdAt?: true
   updatedAt?: true
+  resetPasswordToken?: true
+  resetPasswordTokenExpiry?: true
   _all?: true
 }
 
@@ -227,6 +239,8 @@ export type UserGroupByOutputType = {
   avatarPublicId: string | null
   createdAt: Date
   updatedAt: Date
+  resetPasswordToken: string | null
+  resetPasswordTokenExpiry: Date | null
   _count: UserCountAggregateOutputType | null
   _avg: UserAvgAggregateOutputType | null
   _sum: UserSumAggregateOutputType | null
@@ -264,12 +278,14 @@ export type UserWhereInput = {
   avatarPublicId?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  resetPasswordToken?: Prisma.StringNullableFilter<"User"> | string | null
+  resetPasswordTokenExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   videos?: Prisma.VideoListRelationFilter
   comments?: Prisma.CommentListRelationFilter
   likes?: Prisma.LikeListRelationFilter
   subscriptions?: Prisma.SubscriptionListRelationFilter
   subscribers?: Prisma.SubscriptionListRelationFilter
-  histories?: Prisma.HistoryListRelationFilter
+  history?: Prisma.HistoryListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -284,12 +300,14 @@ export type UserOrderByWithRelationInput = {
   avatarPublicId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  resetPasswordToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetPasswordTokenExpiry?: Prisma.SortOrderInput | Prisma.SortOrder
   videos?: Prisma.VideoOrderByRelationAggregateInput
   comments?: Prisma.CommentOrderByRelationAggregateInput
   likes?: Prisma.LikeOrderByRelationAggregateInput
   subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
   subscribers?: Prisma.SubscriptionOrderByRelationAggregateInput
-  histories?: Prisma.HistoryOrderByRelationAggregateInput
+  history?: Prisma.HistoryOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -307,12 +325,14 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   avatarPublicId?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  resetPasswordToken?: Prisma.StringNullableFilter<"User"> | string | null
+  resetPasswordTokenExpiry?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   videos?: Prisma.VideoListRelationFilter
   comments?: Prisma.CommentListRelationFilter
   likes?: Prisma.LikeListRelationFilter
   subscriptions?: Prisma.SubscriptionListRelationFilter
   subscribers?: Prisma.SubscriptionListRelationFilter
-  histories?: Prisma.HistoryListRelationFilter
+  history?: Prisma.HistoryListRelationFilter
 }, "id" | "username" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -327,6 +347,8 @@ export type UserOrderByWithAggregationInput = {
   avatarPublicId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  resetPasswordToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetPasswordTokenExpiry?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
@@ -349,6 +371,8 @@ export type UserScalarWhereWithAggregatesInput = {
   avatarPublicId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
+  resetPasswordToken?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  resetPasswordTokenExpiry?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
 }
 
 export type UserCreateInput = {
@@ -362,12 +386,14 @@ export type UserCreateInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   videos?: Prisma.VideoCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutSubscriberInput
   subscribers?: Prisma.SubscriptionCreateNestedManyWithoutCreatorInput
-  histories?: Prisma.HistoryCreateNestedManyWithoutUserInput
+  history?: Prisma.HistoryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -382,12 +408,14 @@ export type UserUncheckedCreateInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   videos?: Prisma.VideoUncheckedCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
   subscribers?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutCreatorInput
-  histories?: Prisma.HistoryUncheckedCreateNestedManyWithoutUserInput
+  history?: Prisma.HistoryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -401,12 +429,14 @@ export type UserUpdateInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   videos?: Prisma.VideoUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutSubscriberNestedInput
   subscribers?: Prisma.SubscriptionUpdateManyWithoutCreatorNestedInput
-  histories?: Prisma.HistoryUpdateManyWithoutUserNestedInput
+  history?: Prisma.HistoryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -421,12 +451,14 @@ export type UserUncheckedUpdateInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   videos?: Prisma.VideoUncheckedUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
   subscribers?: Prisma.SubscriptionUncheckedUpdateManyWithoutCreatorNestedInput
-  histories?: Prisma.HistoryUncheckedUpdateManyWithoutUserNestedInput
+  history?: Prisma.HistoryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -441,6 +473,8 @@ export type UserCreateManyInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
 }
 
 export type UserUpdateManyMutationInput = {
@@ -454,6 +488,8 @@ export type UserUpdateManyMutationInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -468,6 +504,8 @@ export type UserUncheckedUpdateManyInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -482,6 +520,8 @@ export type UserCountOrderByAggregateInput = {
   avatarPublicId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  resetPasswordToken?: Prisma.SortOrder
+  resetPasswordTokenExpiry?: Prisma.SortOrder
 }
 
 export type UserAvgOrderByAggregateInput = {
@@ -500,6 +540,8 @@ export type UserMaxOrderByAggregateInput = {
   avatarPublicId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  resetPasswordToken?: Prisma.SortOrder
+  resetPasswordTokenExpiry?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -514,6 +556,8 @@ export type UserMinOrderByAggregateInput = {
   avatarPublicId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  resetPasswordToken?: Prisma.SortOrder
+  resetPasswordTokenExpiry?: Prisma.SortOrder
 }
 
 export type UserSumOrderByAggregateInput = {
@@ -623,18 +667,18 @@ export type UserUpdateOneRequiredWithoutSubscribersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSubscribersInput, Prisma.UserUpdateWithoutSubscribersInput>, Prisma.UserUncheckedUpdateWithoutSubscribersInput>
 }
 
-export type UserCreateNestedOneWithoutHistoriesInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutHistoriesInput, Prisma.UserUncheckedCreateWithoutHistoriesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutHistoriesInput
+export type UserCreateNestedOneWithoutHistoryInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutHistoryInput, Prisma.UserUncheckedCreateWithoutHistoryInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutHistoryInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutHistoriesNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutHistoriesInput, Prisma.UserUncheckedCreateWithoutHistoriesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutHistoriesInput
-  upsert?: Prisma.UserUpsertWithoutHistoriesInput
+export type UserUpdateOneRequiredWithoutHistoryNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutHistoryInput, Prisma.UserUncheckedCreateWithoutHistoryInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutHistoryInput
+  upsert?: Prisma.UserUpsertWithoutHistoryInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutHistoriesInput, Prisma.UserUpdateWithoutHistoriesInput>, Prisma.UserUncheckedUpdateWithoutHistoriesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutHistoryInput, Prisma.UserUpdateWithoutHistoryInput>, Prisma.UserUncheckedUpdateWithoutHistoryInput>
 }
 
 export type UserCreateWithoutVideosInput = {
@@ -648,11 +692,13 @@ export type UserCreateWithoutVideosInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   comments?: Prisma.CommentCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutSubscriberInput
   subscribers?: Prisma.SubscriptionCreateNestedManyWithoutCreatorInput
-  histories?: Prisma.HistoryCreateNestedManyWithoutUserInput
+  history?: Prisma.HistoryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutVideosInput = {
@@ -667,11 +713,13 @@ export type UserUncheckedCreateWithoutVideosInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
   subscribers?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutCreatorInput
-  histories?: Prisma.HistoryUncheckedCreateNestedManyWithoutUserInput
+  history?: Prisma.HistoryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutVideosInput = {
@@ -701,11 +749,13 @@ export type UserUpdateWithoutVideosInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutSubscriberNestedInput
   subscribers?: Prisma.SubscriptionUpdateManyWithoutCreatorNestedInput
-  histories?: Prisma.HistoryUpdateManyWithoutUserNestedInput
+  history?: Prisma.HistoryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutVideosInput = {
@@ -720,11 +770,13 @@ export type UserUncheckedUpdateWithoutVideosInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
   subscribers?: Prisma.SubscriptionUncheckedUpdateManyWithoutCreatorNestedInput
-  histories?: Prisma.HistoryUncheckedUpdateManyWithoutUserNestedInput
+  history?: Prisma.HistoryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCommentsInput = {
@@ -738,11 +790,13 @@ export type UserCreateWithoutCommentsInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   videos?: Prisma.VideoCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutSubscriberInput
   subscribers?: Prisma.SubscriptionCreateNestedManyWithoutCreatorInput
-  histories?: Prisma.HistoryCreateNestedManyWithoutUserInput
+  history?: Prisma.HistoryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCommentsInput = {
@@ -757,11 +811,13 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   videos?: Prisma.VideoUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
   subscribers?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutCreatorInput
-  histories?: Prisma.HistoryUncheckedCreateNestedManyWithoutUserInput
+  history?: Prisma.HistoryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCommentsInput = {
@@ -791,11 +847,13 @@ export type UserUpdateWithoutCommentsInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   videos?: Prisma.VideoUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutSubscriberNestedInput
   subscribers?: Prisma.SubscriptionUpdateManyWithoutCreatorNestedInput
-  histories?: Prisma.HistoryUpdateManyWithoutUserNestedInput
+  history?: Prisma.HistoryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -810,11 +868,13 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   videos?: Prisma.VideoUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
   subscribers?: Prisma.SubscriptionUncheckedUpdateManyWithoutCreatorNestedInput
-  histories?: Prisma.HistoryUncheckedUpdateManyWithoutUserNestedInput
+  history?: Prisma.HistoryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLikesInput = {
@@ -828,11 +888,13 @@ export type UserCreateWithoutLikesInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   videos?: Prisma.VideoCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutSubscriberInput
   subscribers?: Prisma.SubscriptionCreateNestedManyWithoutCreatorInput
-  histories?: Prisma.HistoryCreateNestedManyWithoutUserInput
+  history?: Prisma.HistoryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLikesInput = {
@@ -847,11 +909,13 @@ export type UserUncheckedCreateWithoutLikesInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   videos?: Prisma.VideoUncheckedCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
   subscribers?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutCreatorInput
-  histories?: Prisma.HistoryUncheckedCreateNestedManyWithoutUserInput
+  history?: Prisma.HistoryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLikesInput = {
@@ -881,11 +945,13 @@ export type UserUpdateWithoutLikesInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   videos?: Prisma.VideoUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutSubscriberNestedInput
   subscribers?: Prisma.SubscriptionUpdateManyWithoutCreatorNestedInput
-  histories?: Prisma.HistoryUpdateManyWithoutUserNestedInput
+  history?: Prisma.HistoryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLikesInput = {
@@ -900,11 +966,13 @@ export type UserUncheckedUpdateWithoutLikesInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   videos?: Prisma.VideoUncheckedUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
   subscribers?: Prisma.SubscriptionUncheckedUpdateManyWithoutCreatorNestedInput
-  histories?: Prisma.HistoryUncheckedUpdateManyWithoutUserNestedInput
+  history?: Prisma.HistoryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSubscriptionsInput = {
@@ -918,11 +986,13 @@ export type UserCreateWithoutSubscriptionsInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   videos?: Prisma.VideoCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   subscribers?: Prisma.SubscriptionCreateNestedManyWithoutCreatorInput
-  histories?: Prisma.HistoryCreateNestedManyWithoutUserInput
+  history?: Prisma.HistoryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSubscriptionsInput = {
@@ -937,11 +1007,13 @@ export type UserUncheckedCreateWithoutSubscriptionsInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   videos?: Prisma.VideoUncheckedCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   subscribers?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutCreatorInput
-  histories?: Prisma.HistoryUncheckedCreateNestedManyWithoutUserInput
+  history?: Prisma.HistoryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSubscriptionsInput = {
@@ -960,11 +1032,13 @@ export type UserCreateWithoutSubscribersInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   videos?: Prisma.VideoCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutSubscriberInput
-  histories?: Prisma.HistoryCreateNestedManyWithoutUserInput
+  history?: Prisma.HistoryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSubscribersInput = {
@@ -979,11 +1053,13 @@ export type UserUncheckedCreateWithoutSubscribersInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   videos?: Prisma.VideoUncheckedCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
   subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-  histories?: Prisma.HistoryUncheckedCreateNestedManyWithoutUserInput
+  history?: Prisma.HistoryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSubscribersInput = {
@@ -1013,11 +1089,13 @@ export type UserUpdateWithoutSubscriptionsInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   videos?: Prisma.VideoUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   subscribers?: Prisma.SubscriptionUpdateManyWithoutCreatorNestedInput
-  histories?: Prisma.HistoryUpdateManyWithoutUserNestedInput
+  history?: Prisma.HistoryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscriptionsInput = {
@@ -1032,11 +1110,13 @@ export type UserUncheckedUpdateWithoutSubscriptionsInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   videos?: Prisma.VideoUncheckedUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   subscribers?: Prisma.SubscriptionUncheckedUpdateManyWithoutCreatorNestedInput
-  histories?: Prisma.HistoryUncheckedUpdateManyWithoutUserNestedInput
+  history?: Prisma.HistoryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutSubscribersInput = {
@@ -1061,11 +1141,13 @@ export type UserUpdateWithoutSubscribersInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   videos?: Prisma.VideoUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUpdateManyWithoutSubscriberNestedInput
-  histories?: Prisma.HistoryUpdateManyWithoutUserNestedInput
+  history?: Prisma.HistoryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSubscribersInput = {
@@ -1080,14 +1162,16 @@ export type UserUncheckedUpdateWithoutSubscribersInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   videos?: Prisma.VideoUncheckedUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-  histories?: Prisma.HistoryUncheckedUpdateManyWithoutUserNestedInput
+  history?: Prisma.HistoryUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutHistoriesInput = {
+export type UserCreateWithoutHistoryInput = {
   username: string
   email: string
   password: string
@@ -1098,6 +1182,8 @@ export type UserCreateWithoutHistoriesInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   videos?: Prisma.VideoCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeCreateNestedManyWithoutUserInput
@@ -1105,7 +1191,7 @@ export type UserCreateWithoutHistoriesInput = {
   subscribers?: Prisma.SubscriptionCreateNestedManyWithoutCreatorInput
 }
 
-export type UserUncheckedCreateWithoutHistoriesInput = {
+export type UserUncheckedCreateWithoutHistoryInput = {
   id?: number
   username: string
   email: string
@@ -1117,6 +1203,8 @@ export type UserUncheckedCreateWithoutHistoriesInput = {
   avatarPublicId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  resetPasswordToken?: string | null
+  resetPasswordTokenExpiry?: Date | string | null
   videos?: Prisma.VideoUncheckedCreateNestedManyWithoutUserInput
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutUserInput
   likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
@@ -1124,23 +1212,23 @@ export type UserUncheckedCreateWithoutHistoriesInput = {
   subscribers?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutCreatorInput
 }
 
-export type UserCreateOrConnectWithoutHistoriesInput = {
+export type UserCreateOrConnectWithoutHistoryInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutHistoriesInput, Prisma.UserUncheckedCreateWithoutHistoriesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutHistoryInput, Prisma.UserUncheckedCreateWithoutHistoryInput>
 }
 
-export type UserUpsertWithoutHistoriesInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutHistoriesInput, Prisma.UserUncheckedUpdateWithoutHistoriesInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutHistoriesInput, Prisma.UserUncheckedCreateWithoutHistoriesInput>
+export type UserUpsertWithoutHistoryInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutHistoryInput, Prisma.UserUncheckedUpdateWithoutHistoryInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutHistoryInput, Prisma.UserUncheckedCreateWithoutHistoryInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutHistoriesInput = {
+export type UserUpdateToOneWithWhereWithoutHistoryInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutHistoriesInput, Prisma.UserUncheckedUpdateWithoutHistoriesInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutHistoryInput, Prisma.UserUncheckedUpdateWithoutHistoryInput>
 }
 
-export type UserUpdateWithoutHistoriesInput = {
+export type UserUpdateWithoutHistoryInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1151,6 +1239,8 @@ export type UserUpdateWithoutHistoriesInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   videos?: Prisma.VideoUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
@@ -1158,7 +1248,7 @@ export type UserUpdateWithoutHistoriesInput = {
   subscribers?: Prisma.SubscriptionUpdateManyWithoutCreatorNestedInput
 }
 
-export type UserUncheckedUpdateWithoutHistoriesInput = {
+export type UserUncheckedUpdateWithoutHistoryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   username?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1170,6 +1260,8 @@ export type UserUncheckedUpdateWithoutHistoriesInput = {
   avatarPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetPasswordTokenExpiry?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   videos?: Prisma.VideoUncheckedUpdateManyWithoutUserNestedInput
   comments?: Prisma.CommentUncheckedUpdateManyWithoutUserNestedInput
   likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
@@ -1188,7 +1280,7 @@ export type UserCountOutputType = {
   likes: number
   subscriptions: number
   subscribers: number
-  histories: number
+  history: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1197,7 +1289,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   likes?: boolean | UserCountOutputTypeCountLikesArgs
   subscriptions?: boolean | UserCountOutputTypeCountSubscriptionsArgs
   subscribers?: boolean | UserCountOutputTypeCountSubscribersArgs
-  histories?: boolean | UserCountOutputTypeCountHistoriesArgs
+  history?: boolean | UserCountOutputTypeCountHistoryArgs
 }
 
 /**
@@ -1248,7 +1340,7 @@ export type UserCountOutputTypeCountSubscribersArgs<ExtArgs extends runtime.Type
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountHistoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type UserCountOutputTypeCountHistoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.HistoryWhereInput
 }
 
@@ -1265,12 +1357,14 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   avatarPublicId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  resetPasswordToken?: boolean
+  resetPasswordTokenExpiry?: boolean
   videos?: boolean | Prisma.User$videosArgs<ExtArgs>
   comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
   likes?: boolean | Prisma.User$likesArgs<ExtArgs>
   subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
   subscribers?: boolean | Prisma.User$subscribersArgs<ExtArgs>
-  histories?: boolean | Prisma.User$historiesArgs<ExtArgs>
+  history?: boolean | Prisma.User$historyArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1286,6 +1380,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   avatarPublicId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  resetPasswordToken?: boolean
+  resetPasswordTokenExpiry?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1300,6 +1396,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   avatarPublicId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  resetPasswordToken?: boolean
+  resetPasswordTokenExpiry?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -1314,16 +1412,18 @@ export type UserSelectScalar = {
   avatarPublicId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  resetPasswordToken?: boolean
+  resetPasswordTokenExpiry?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "password" | "emailVerified" | "emailVerificationToken" | "emailVerificationExpires" | "avatarUrl" | "avatarPublicId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "username" | "email" | "password" | "emailVerified" | "emailVerificationToken" | "emailVerificationExpires" | "avatarUrl" | "avatarPublicId" | "createdAt" | "updatedAt" | "resetPasswordToken" | "resetPasswordTokenExpiry", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   videos?: boolean | Prisma.User$videosArgs<ExtArgs>
   comments?: boolean | Prisma.User$commentsArgs<ExtArgs>
   likes?: boolean | Prisma.User$likesArgs<ExtArgs>
   subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
   subscribers?: boolean | Prisma.User$subscribersArgs<ExtArgs>
-  histories?: boolean | Prisma.User$historiesArgs<ExtArgs>
+  history?: boolean | Prisma.User$historyArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1337,7 +1437,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     likes: Prisma.$LikePayload<ExtArgs>[]
     subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
     subscribers: Prisma.$SubscriptionPayload<ExtArgs>[]
-    histories: Prisma.$HistoryPayload<ExtArgs>[]
+    history: Prisma.$HistoryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1351,6 +1451,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     avatarPublicId: string | null
     createdAt: Date
     updatedAt: Date
+    resetPasswordToken: string | null
+    resetPasswordTokenExpiry: Date | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1750,7 +1852,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   likes<T extends Prisma.User$likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   subscriptions<T extends Prisma.User$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   subscribers<T extends Prisma.User$subscribersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscribersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  histories<T extends Prisma.User$historiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$historiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  history<T extends Prisma.User$historyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$historyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1791,6 +1893,8 @@ export interface UserFieldRefs {
   readonly avatarPublicId: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly resetPasswordToken: Prisma.FieldRef<"User", 'String'>
+  readonly resetPasswordTokenExpiry: Prisma.FieldRef<"User", 'DateTime'>
 }
     
 
@@ -2304,9 +2408,9 @@ export type User$subscribersArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
- * User.histories
+ * User.history
  */
-export type User$historiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$historyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the History
    */

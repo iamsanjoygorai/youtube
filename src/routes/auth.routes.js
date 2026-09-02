@@ -7,6 +7,10 @@ import {
 } from "../controllers/auth.controller.js";
 
 import { authenticate } from "../middleware/auth.middleware.js";
+import {
+  forgotPassword,
+  resetPassword,
+} from "../controllers/auth.controller.js";
 
 import {
   verifyEmail,
@@ -21,5 +25,7 @@ router.get("/me", authenticate, getMe);
 router.get("/verify-email", verifyEmail);
 
 router.post("/resend-verification", resendVerificationEmail);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 export default router;

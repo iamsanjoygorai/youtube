@@ -449,6 +449,7 @@ export const addVideoView = async (req, res) => {
       });
     }
 
+    // Increase video view count
     const updatedVideo = await prisma.video.update({
       where: { id },
       data: {
@@ -461,6 +462,28 @@ export const addVideoView = async (req, res) => {
         views: true,
       },
     });
+
+    // Add video to history only if user is logged in
+    if (req.user?.id) {
+      await prisma.history.upsert({
+        where: {
+          userId_videoId: {
+            userId: req.user.id,
+            videoId: id,
+          },
+        },
+
+        update: {
+          watchedAt: new Date(),
+        },
+
+        create: {
+          userId: req.user.id,
+          videoId: id,
+          watchedAt: new Date(),
+        },
+      });
+    }
 
     return res.status(200).json({
       success: true,
