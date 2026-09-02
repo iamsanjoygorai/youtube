@@ -42,3 +42,8 @@ export type Like = Prisma.LikeModel
  * 
  */
 export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model History
+ * 
+ */
+export type History = Prisma.HistoryModel

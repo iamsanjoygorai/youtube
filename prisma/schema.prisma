@@ -27,7 +27,11 @@ model User {
   likes         Like[]
   subscriptions Subscription[] @relation("UserSubscriptions")
   subscribers   Subscription[] @relation("UserSubscribers")
+<<<<<<< HEAD
   history       History[]
+=======
+  histories     History[]
+>>>>>>> 5c7ecf0 (history feature has been added)
 }
 
 model Video {
@@ -46,9 +50,16 @@ model Video {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+<<<<<<< HEAD
   comments Comment[]
   likes    Like[]
   history  History[]
+=======
+  // keep your existing relations here
+  comments  Comment[]
+  likes     Like[]
+  histories History[]
+>>>>>>> 5c7ecf0 (history feature has been added)
 }
 
 model Comment {
@@ -106,5 +117,8 @@ model History {
 
   @@unique([userId, videoId])
   @@index([userId, watchedAt])
+<<<<<<< HEAD
   @@index([videoId])
+=======
+>>>>>>> 5c7ecf0 (history feature has been added)
 }

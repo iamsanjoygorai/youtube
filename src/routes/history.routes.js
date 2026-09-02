@@ -11,6 +11,7 @@ import { authenticate } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
+<<<<<<< HEAD
 router.use(authenticate);
 
 // Add/update a watched video
@@ -26,3 +27,21 @@ router.delete("/", clearHistory);
 router.delete("/:videoId", removeFromHistory);
 
 export default router;
+=======
+// Every history route requires authentication
+router.use(authenticate);
+
+// Add/update history
+router.post("/", addToHistory);
+
+// Get user's history
+router.get("/", getHistory);
+
+// Clear all history
+router.delete("/", clearHistory);
+
+// Delete one video from history
+router.delete("/:videoId", removeFromHistory);
+
+export default router;
+>>>>>>> 5c7ecf0 (history feature has been added)

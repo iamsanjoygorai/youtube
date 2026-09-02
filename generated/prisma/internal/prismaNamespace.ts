@@ -401,7 +401,8 @@ export const ModelName = {
   Video: 'Video',
   Comment: 'Comment',
   Like: 'Like',
-  Subscription: 'Subscription'
+  Subscription: 'Subscription',
+  History: 'History'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -417,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "video" | "comment" | "like" | "subscription"
+    modelProps: "user" | "video" | "comment" | "like" | "subscription" | "history"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -791,6 +792,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    History: {
+      payload: Prisma.$HistoryPayload<ExtArgs>
+      fields: Prisma.HistoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.HistoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.HistoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>
+        }
+        findFirst: {
+          args: Prisma.HistoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.HistoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>
+        }
+        findMany: {
+          args: Prisma.HistoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>[]
+        }
+        create: {
+          args: Prisma.HistoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>
+        }
+        createMany: {
+          args: Prisma.HistoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.HistoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>[]
+        }
+        delete: {
+          args: Prisma.HistoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>
+        }
+        update: {
+          args: Prisma.HistoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.HistoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.HistoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.HistoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.HistoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HistoryPayload>
+        }
+        aggregate: {
+          args: Prisma.HistoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateHistory>
+        }
+        groupBy: {
+          args: Prisma.HistoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HistoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.HistoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HistoryCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -894,6 +969,16 @@ export const SubscriptionScalarFieldEnum = {
 } as const
 
 export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const HistoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  videoId: 'videoId',
+  watchedAt: 'watchedAt'
+} as const
+
+export type HistoryScalarFieldEnum = (typeof HistoryScalarFieldEnum)[keyof typeof HistoryScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1144,6 +1229,7 @@ export type GlobalOmitConfig = {
   comment?: Prisma.CommentOmit
   like?: Prisma.LikeOmit
   subscription?: Prisma.SubscriptionOmit
+  history?: Prisma.HistoryOmit
 }
 
 /* Types for Logging */
