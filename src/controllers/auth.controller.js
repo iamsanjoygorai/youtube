@@ -10,7 +10,10 @@ import {
   loginSchema,
 } from "../validations/auth.validation.js";
 
+
 export const register = async (req, res) => {
+  console.log("REGISTER CONTROLLER CALLED");
+
   try {
     const validatedData = registerSchema.parse(req.body);
 

@@ -8,10 +8,15 @@ datasource db {
 }
 
 model User {
-  id             Int      @id @default(autoincrement())
-  username       String   @unique
-  email          String   @unique
-  password       String
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  email    String @unique
+  password String
+
+  emailVerified            Boolean   @default(false)
+  emailVerificationToken   String?
+  emailVerificationExpires DateTime?
+
   avatarUrl      String?
   avatarPublicId String?
   createdAt      DateTime @default(now())
