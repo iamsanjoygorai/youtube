@@ -8,6 +8,7 @@ import likeRoutes from "./routes/like.routes.js";
 import commentRoutes from "./routes/comment.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import subscriptionRoutes from "./routes/subscription.routes.js";
+import historyRoutes from "./routes/history.routes.js";
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use("/api/videos", likeRoutes);
 app.use("/api", commentRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api", subscriptionRoutes);
+app.use("/api/history", historyRoutes);
 
 
 export default app;
