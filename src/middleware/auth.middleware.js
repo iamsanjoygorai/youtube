@@ -37,3 +37,35 @@ export const authenticate = (req, res, next) => {
     });
   }
 };
+
+export const optionalAuthenticate = (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    // No token = anonymous user
+    if (!authHeader) {
+      return next();
+    }
+
+    const [scheme, token] = authHeader.split(" ");
+
+    // Invalid/missing token = treat as anonymous
+    if (scheme !== "Bearer" || !token) {
+      return next();
+    }
+
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+
+    req.user = {
+      id: decoded.userId,
+    };
+
+    next();
+  } catch (error) {
+    // Invalid/expired token should not block public video viewing
+    next();
+  }
+};

@@ -9,8 +9,12 @@ import {
   addVideoView,
 } from "../controllers/video.controller.js";
 
-import { authenticate } from "../middleware/auth.middleware.js";
+import {
+  authenticate,
+  optionalAuthenticate,
+} from "../middleware/auth.middleware.js";
 import upload from "../middleware/upload.middleware.js";
+
 
 const router = Router();
 
@@ -28,10 +32,15 @@ router.post(
 // Get all videos
 router.get("/", getVideos);
 
-router.post("/:id/view", addVideoView);
+router.post(
+  "/:id/view",
+  optionalAuthenticate,
+  addVideoView
+);
 
 // Get single video
 router.get("/:id", getVideoById);
+router.post("/:id/view", optionalAuthenticate, addVideoView);
 
 // Update video
 router.put(
@@ -45,6 +54,8 @@ router.put(
 
 // Delete video
 router.delete("/:id", authenticate, deleteVideo);
+
+
 
 
 export default router;
