@@ -7,6 +7,7 @@ import {
   updateVideo,
   deleteVideo,
   addVideoView,
+  getHomeFeed,
 } from "../controllers/video.controller.js";
 
 import {
@@ -32,6 +33,10 @@ router.post(
 // Get all videos
 router.get("/", getVideos);
 
+// Home feed
+router.get("/feed", getHomeFeed);
+
+
 router.post(
   "/:id/view",
   optionalAuthenticate,
@@ -40,7 +45,6 @@ router.post(
 
 // Get single video
 router.get("/:id", getVideoById);
-router.post("/:id/view", optionalAuthenticate, addVideoView);
 
 // Update video
 router.put(
@@ -54,6 +58,7 @@ router.put(
 
 // Delete video
 router.delete("/:id", authenticate, deleteVideo);
+
 
 
 

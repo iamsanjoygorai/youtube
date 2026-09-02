@@ -503,3 +503,114 @@ export const addVideoView = async (req, res) => {
     });
   }
 };
+
+// GET /api/videos/feed
+export const getHomeFeed = async (req, res) => {
+  try {
+    const page = Math.max(
+      Number(req.query.page) || 1,
+      1
+    );
+
+    const limit = Math.min(
+      Math.max(Number(req.query.limit) || 10, 1),
+      50
+    );
+
+    const skip = (page - 1) * limit;
+
+    const [totalVideos, videos] = await prisma.$transaction([
+      prisma.video.count(),
+
+      prisma.video.findMany({
+        skip,
+        take: limit,
+
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              avatarUrl: true,
+            },
+          },
+
+          _count: {
+            select: {
+              likes: true,
+              comments: true,
+            },
+          },
+        },
+
+        orderBy: [
+          {
+            views: "desc",
+          },
+          {
+            createdAt: "desc",
+          },
+        ],
+      }),
+    ]);
+
+    const userId = req.user?.id || null;
+
+    const videosWithStats = await Promise.all(
+      videos.map(async (video) => {
+        let isLiked = false;
+
+        if (userId) {
+          const like = await prisma.like.findUnique({
+            where: {
+              userId_videoId: {
+                userId,
+                videoId: video.id,
+              },
+            },
+          });
+
+          isLiked = !!like;
+        }
+
+        return {
+          ...video,
+
+          viewCount: video.views,
+          likeCount: video._count.likes,
+          commentCount: video._count.comments,
+          isLiked,
+
+          _count: undefined,
+        };
+      })
+    );
+
+    const totalPages = Math.ceil(
+      totalVideos / limit
+    );
+
+    return res.status(200).json({
+      success: true,
+      count: videosWithStats.length,
+      data: videosWithStats,
+
+      pagination: {
+        page,
+        limit,
+        totalVideos,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    });
+  } catch (error) {
+    console.error("Get home feed error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch home feed",
+      error: error.message,
+    });
+  }
+};
