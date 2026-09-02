@@ -519,9 +519,9 @@ export const getHomeFeed = async (req, res) => {
 
     const userId = req.user?.id || null;
 
-    // -----------------------------------
-    // Anonymous user
-    // -----------------------------------
+    // ==========================================
+    // ANONYMOUS USER
+    // ==========================================
     if (!userId) {
       const skip = (page - 1) * limit;
 
@@ -589,26 +589,28 @@ export const getHomeFeed = async (req, res) => {
       });
     }
 
-    // -----------------------------------
-    // Get user's subscriptions
-    // -----------------------------------
-    const subscriptions = await prisma.subscription.findMany({
-      where: {
-        subscriberId: userId,
-      },
+    // ==========================================
+    // GET SUBSCRIPTIONS
+    // ==========================================
+    const subscriptions =
+      await prisma.subscription.findMany({
+        where: {
+          subscriberId: userId,
+        },
 
-      select: {
-        creatorId: true,
-      },
-    });
+        select: {
+          creatorId: true,
+        },
+      });
 
-    const subscribedCreatorIds = subscriptions.map(
-      (subscription) => subscription.creatorId
-    );
+    const subscribedCreatorIds =
+      subscriptions.map(
+        (subscription) => subscription.creatorId
+      );
 
-    // -----------------------------------
-    // Get user's watch history
-    // -----------------------------------
+    // ==========================================
+    // GET WATCH HISTORY
+    // ==========================================
     const history = await prisma.history.findMany({
       where: {
         userId,
@@ -620,6 +622,8 @@ export const getHomeFeed = async (req, res) => {
         video: {
           select: {
             userId: true,
+            title: true,
+            description: true,
           },
         },
       },
@@ -637,13 +641,93 @@ export const getHomeFeed = async (req, res) => {
 
     const watchedCreatorIds = [
       ...new Set(
-        history.map((item) => item.video.userId)
+        history.map(
+          (item) => item.video.userId
+        )
       ),
     ];
 
-    // -----------------------------------
-    // Get candidate videos
-    // -----------------------------------
+    // ==========================================
+    // BUILD USER INTEREST KEYWORDS
+    // ==========================================
+
+    const stopWords = new Set([
+      "the",
+      "and",
+      "for",
+      "with",
+      "this",
+      "that",
+      "from",
+      "your",
+      "you",
+      "are",
+      "was",
+      "how",
+      "what",
+      "why",
+      "when",
+      "where",
+      "into",
+      "about",
+      "using",
+      "use",
+      "a",
+      "an",
+      "to",
+      "of",
+      "in",
+      "on",
+      "is",
+      "it",
+      "or",
+      "as",
+      "at",
+      "by",
+      "be",
+      "can",
+      "new",
+    ]);
+
+    const keywordFrequency = {};
+
+    for (const item of history) {
+      const text = `
+        ${item.video.title || ""}
+        ${item.video.description || ""}
+      `.toLowerCase();
+
+      const words = text.match(
+        /[a-z0-9]+/g
+      ) || [];
+
+      for (const word of words) {
+        // Ignore very short words
+        if (word.length < 3) {
+          continue;
+        }
+
+        // Ignore common words
+        if (stopWords.has(word)) {
+          continue;
+        }
+
+        keywordFrequency[word] =
+          (keywordFrequency[word] || 0) + 1;
+      }
+    }
+
+    // Keep the strongest 30 interests
+    const userKeywords = Object.entries(
+      keywordFrequency
+    )
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 30)
+      .map(([keyword]) => keyword);
+
+    // ==========================================
+    // GET CANDIDATE VIDEOS
+    // ==========================================
     const videos = await prisma.video.findMany({
       where: {
         NOT: {
@@ -669,41 +753,68 @@ export const getHomeFeed = async (req, res) => {
           },
         },
       },
-
-      orderBy: [
-        {
-          views: "desc",
-        },
-        {
-          createdAt: "desc",
-        },
-      ],
     });
 
-    // -----------------------------------
-    // Calculate recommendation score
-    // -----------------------------------
+    // ==========================================
+    // CALCULATE RECOMMENDATION SCORE
+    // ==========================================
     const now = Date.now();
 
     const rankedVideos = videos.map((video) => {
       let score = 0;
 
-      // 1. Subscribed channel
-      if (subscribedCreatorIds.includes(video.userId)) {
+      // ------------------------------------------
+      // 1. SUBSCRIBED CREATOR
+      // ------------------------------------------
+      if (
+        subscribedCreatorIds.includes(
+          video.userId
+        )
+      ) {
         score += 1000;
       }
 
-      // 2. Creator previously watched
-      if (watchedCreatorIds.includes(video.userId)) {
+      // ------------------------------------------
+      // 2. CREATOR FROM WATCH HISTORY
+      // ------------------------------------------
+      if (
+        watchedCreatorIds.includes(
+          video.userId
+        )
+      ) {
         score += 300;
       }
 
-      // 3. Popularity
-      score += Math.log10(video.views + 1) * 100;
+      // ------------------------------------------
+      // 3. CONTENT MATCH
+      // ------------------------------------------
+      const videoText = `
+        ${video.title || ""}
+        ${video.description || ""}
+      `.toLowerCase();
 
-      // 4. Freshness
+      let matchingKeywords = 0;
+
+      for (const keyword of userKeywords) {
+        if (videoText.includes(keyword)) {
+          matchingKeywords++;
+        }
+      }
+
+      score += matchingKeywords * 50;
+
+      // ------------------------------------------
+      // 4. POPULARITY
+      // ------------------------------------------
+      score +=
+        Math.log10(video.views + 1) * 100;
+
+      // ------------------------------------------
+      // 5. FRESHNESS
+      // ------------------------------------------
       const ageInHours =
-        (now - new Date(video.createdAt).getTime()) /
+        (now -
+          new Date(video.createdAt).getTime()) /
         (1000 * 60 * 60);
 
       if (ageInHours < 24) {
@@ -717,60 +828,73 @@ export const getHomeFeed = async (req, res) => {
       return {
         video,
         score,
+        matchingKeywords,
       };
     });
 
-    // -----------------------------------
-    // Sort by recommendation score
-    // -----------------------------------
+    // ==========================================
+    // SORT BY SCORE
+    // ==========================================
     rankedVideos.sort((a, b) => {
       return b.score - a.score;
     });
 
-    // -----------------------------------
-    // Pagination AFTER ranking
-    // -----------------------------------
-    const totalVideos = rankedVideos.length;
+    // ==========================================
+    // PAGINATION
+    // ==========================================
+    const totalVideos =
+      rankedVideos.length;
 
     const skip = (page - 1) * limit;
 
-    const paginatedVideos = rankedVideos.slice(
-      skip,
-      skip + limit
-    );
+    const paginatedVideos =
+      rankedVideos.slice(
+        skip,
+        skip + limit
+      );
 
-    // -----------------------------------
-    // Add like status
-    // -----------------------------------
-    const videosWithStats = await Promise.all(
-      paginatedVideos.map(async ({ video }) => {
-        const like = await prisma.like.findUnique({
-          where: {
-            userId_videoId: {
-              userId,
-              videoId: video.id,
-            },
-          },
-        });
+    // ==========================================
+    // ADD LIKE STATUS
+    // ==========================================
+    const videosWithStats =
+      await Promise.all(
+        paginatedVideos.map(
+          async ({ video }) => {
+            const like =
+              await prisma.like.findUnique({
+                where: {
+                  userId_videoId: {
+                    userId,
+                    videoId: video.id,
+                  },
+                },
+              });
 
-        return {
-          ...video,
+            return {
+              ...video,
 
-          viewCount: video.views,
-          likeCount: video._count.likes,
-          commentCount: video._count.comments,
+              viewCount: video.views,
+              likeCount:
+                video._count.likes,
+              commentCount:
+                video._count.comments,
 
-          isLiked: !!like,
+              isLiked: !!like,
 
-          _count: undefined,
-        };
-      })
-    );
+              _count: undefined,
+            };
+          }
+        )
+      );
 
-    const totalPages = Math.ceil(
-      totalVideos / limit
-    );
+    const totalPages =
+      Math.ceil(
+        totalVideos / limit
+      );
 
+    // ==========================================
+    // RESPONSE
+    // ==========================================
     return res.status(200).json({
       success: true,
 
@@ -783,16 +907,22 @@ export const getHomeFeed = async (req, res) => {
         limit,
         totalVideos,
         totalPages,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1,
+        hasNextPage:
+          page < totalPages,
+        hasPreviousPage:
+          page > 1,
       },
     });
   } catch (error) {
-    console.error("Get home feed error:", error);
+    console.error(
+      "Get home feed error:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch home feed",
+      message:
+        "Failed to fetch home feed",
       error: error.message,
     });
   }
