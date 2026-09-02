@@ -1,19 +1,12 @@
 import prisma from "../config/db.js";
 
 // POST /api/history
-<<<<<<< HEAD
-=======
-// Add a video to history or update its watched time
->>>>>>> 5c7ecf0 (history feature has been added)
 export const addToHistory = async (req, res) => {
   try {
     const userId = req.user.id;
     const videoId = Number(req.body.videoId);
 
-<<<<<<< HEAD
-=======
     // Validate video ID
->>>>>>> 5c7ecf0 (history feature has been added)
     if (!Number.isInteger(videoId) || videoId <= 0) {
       return res.status(400).json({
         success: false,
@@ -21,17 +14,11 @@ export const addToHistory = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
-    const video = await prisma.video.findUnique({
-      where: { id: videoId },
-      select: { id: true },
-=======
-    // Check whether video exists
+    // Check if video exists
     const video = await prisma.video.findUnique({
       where: {
         id: videoId,
       },
->>>>>>> 5c7ecf0 (history feature has been added)
     });
 
     if (!video) {
@@ -41,10 +28,7 @@ export const addToHistory = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
-=======
-    // Create history record or update existing one
->>>>>>> 5c7ecf0 (history feature has been added)
+    // Create history or update watchedAt
     const history = await prisma.history.upsert({
       where: {
         userId_videoId: {
@@ -52,62 +36,26 @@ export const addToHistory = async (req, res) => {
           videoId,
         },
       },
-<<<<<<< HEAD
-      update: {
-        watchedAt: new Date(),
-      },
-=======
 
       update: {
         watchedAt: new Date(),
       },
 
->>>>>>> 5c7ecf0 (history feature has been added)
       create: {
         userId,
         videoId,
         watchedAt: new Date(),
       },
-<<<<<<< HEAD
-      include: {
-        video: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-            videoUrl: true,
-            thumbnailUrl: true,
-            views: true,
-            createdAt: true,
-            user: {
-              select: {
-                id: true,
-                username: true,
-                avatarUrl: true,
-              },
-            },
-          },
-        },
-      },
-=======
->>>>>>> 5c7ecf0 (history feature has been added)
     });
 
     return res.status(200).json({
       success: true,
       message: "Video added to history",
-<<<<<<< HEAD
-      data: { history },
-    });
-  } catch (error) {
-    console.error("Add history error:", error);
-=======
       data: history,
     });
   } catch (error) {
     console.error("Add history error:", error);
 
->>>>>>> 5c7ecf0 (history feature has been added)
     return res.status(500).json({
       success: false,
       message: "Failed to add video to history",
@@ -115,46 +63,8 @@ export const addToHistory = async (req, res) => {
   }
 };
 
-// GET /api/history
-<<<<<<< HEAD
-export const getHistory = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const page = Math.max(Number(req.query.page) || 1, 1);
-    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 50);
-    const skip = (page - 1) * limit;
 
-    const [totalHistory, history] = await prisma.$transaction([
-      prisma.history.count({ where: { userId } }),
-      prisma.history.findMany({
-        where: { userId },
-        skip,
-        take: limit,
-        orderBy: { watchedAt: "desc" },
-        select: {
-          id: true,
-          videoId: true,
-          watchedAt: true,
-          video: {
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              videoUrl: true,
-              thumbnailUrl: true,
-              views: true,
-              createdAt: true,
-              user: {
-                select: {
-                  id: true,
-                  username: true,
-                  avatarUrl: true,
-                },
-              },
-            },
-          },
-=======
-// Get logged-in user's watch history
+// GET /api/history
 export const getHistory = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -192,27 +102,19 @@ export const getHistory = async (req, res) => {
 
         include: {
           video: true,
->>>>>>> 5c7ecf0 (history feature has been added)
         },
       }),
     ]);
 
-<<<<<<< HEAD
-    const totalPages = Math.ceil(totalHistory / limit);
-=======
     const totalPages = Math.ceil(
       totalHistory / limit
     );
->>>>>>> 5c7ecf0 (history feature has been added)
 
     return res.status(200).json({
       success: true,
       count: history.length,
       data: history,
-<<<<<<< HEAD
-=======
 
->>>>>>> 5c7ecf0 (history feature has been added)
       pagination: {
         page,
         limit,
@@ -224,10 +126,7 @@ export const getHistory = async (req, res) => {
     });
   } catch (error) {
     console.error("Get history error:", error);
-<<<<<<< HEAD
-=======
 
->>>>>>> 5c7ecf0 (history feature has been added)
     return res.status(500).json({
       success: false,
       message: "Failed to fetch history",
@@ -235,16 +134,14 @@ export const getHistory = async (req, res) => {
   }
 };
 
+
 // DELETE /api/history/:videoId
-<<<<<<< HEAD
-=======
-// Remove one video from history
->>>>>>> 5c7ecf0 (history feature has been added)
 export const removeFromHistory = async (req, res) => {
   try {
     const userId = req.user.id;
     const videoId = Number(req.params.videoId);
 
+    // Validate video ID
     if (!Number.isInteger(videoId) || videoId <= 0) {
       return res.status(400).json({
         success: false,
@@ -252,22 +149,14 @@ export const removeFromHistory = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
-    const deleted = await prisma.history.deleteMany({
-=======
     const result = await prisma.history.deleteMany({
->>>>>>> 5c7ecf0 (history feature has been added)
       where: {
         userId,
         videoId,
       },
     });
 
-<<<<<<< HEAD
-    if (deleted.count === 0) {
-=======
     if (result.count === 0) {
->>>>>>> 5c7ecf0 (history feature has been added)
       return res.status(404).json({
         success: false,
         message: "Video not found in history",
@@ -280,10 +169,7 @@ export const removeFromHistory = async (req, res) => {
     });
   } catch (error) {
     console.error("Remove history error:", error);
-<<<<<<< HEAD
-=======
 
->>>>>>> 5c7ecf0 (history feature has been added)
     return res.status(500).json({
       success: false,
       message: "Failed to remove video from history",
@@ -291,14 +177,8 @@ export const removeFromHistory = async (req, res) => {
   }
 };
 
+
 // DELETE /api/history
-<<<<<<< HEAD
-export const clearHistory = async (req, res) => {
-  try {
-    const result = await prisma.history.deleteMany({
-      where: { userId: req.user.id },
-=======
-// Clear logged-in user's entire history
 export const clearHistory = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -307,33 +187,19 @@ export const clearHistory = async (req, res) => {
       where: {
         userId,
       },
->>>>>>> 5c7ecf0 (history feature has been added)
     });
 
     return res.status(200).json({
       success: true,
       message: "History cleared successfully",
-<<<<<<< HEAD
-      data: {
-        deletedCount: result.count,
-      },
-    });
-  } catch (error) {
-    console.error("Clear history error:", error);
-=======
       deletedCount: result.count,
     });
   } catch (error) {
     console.error("Clear history error:", error);
 
->>>>>>> 5c7ecf0 (history feature has been added)
     return res.status(500).json({
       success: false,
       message: "Failed to clear history",
     });
   }
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> 5c7ecf0 (history feature has been added)
