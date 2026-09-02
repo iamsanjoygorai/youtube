@@ -4,8 +4,9 @@ import {
   createVideo,
   getVideos,
   getVideoById,
-  deleteVideo,
   updateVideo,
+  deleteVideo,
+  addVideoView,
 } from "../controllers/video.controller.js";
 
 import { authenticate } from "../middleware/auth.middleware.js";
@@ -27,6 +28,8 @@ router.post(
 // Get all videos
 router.get("/", getVideos);
 
+router.post("/:id/view", addVideoView);
+
 // Get single video
 router.get("/:id", getVideoById);
 
@@ -42,5 +45,6 @@ router.put(
 
 // Delete video
 router.delete("/:id", authenticate, deleteVideo);
+
 
 export default router;

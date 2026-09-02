@@ -32,17 +32,17 @@ model Video {
   thumbnailUrl      String?
   publicId          String
   thumbnailPublicId String?
+  views             Int     @default(0)
   userId            Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  comments  Comment[]
-  likes     Like[]
-
-  @@index([userId])
-  @@index([createdAt])
+  // keep your existing relations here
+  comments Comment[]
+  likes    Like[]
 }
 
 model Comment {

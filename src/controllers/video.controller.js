@@ -7,6 +7,7 @@ import {
   deleteThumbnailFromCloudinary,
 } from "../services/video.service.js";
 
+
 // POST /api/videos
 export const createVideo = async (req, res) => {
   try {
@@ -70,26 +71,68 @@ export const createVideo = async (req, res) => {
 // GET /api/videos
 export const getVideos = async (req, res) => {
   try {
-    const videos = await prisma.video.findMany({
-      include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            avatarUrl: true,
+    const search = req.query.search?.trim() || "";
+
+    const page = Math.max(Number(req.query.page) || 1, 1);
+
+    const limit = Math.min(
+      Math.max(Number(req.query.limit) || 10, 1),
+      50
+    );
+
+    const skip = (page - 1) * limit;
+
+    const where = search
+      ? {
+          OR: [
+            {
+              title: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+            {
+              description: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          ],
+        }
+      : {};
+
+    const [totalVideos, videos] = await prisma.$transaction([
+      prisma.video.count({
+        where,
+      }),
+
+      prisma.video.findMany({
+        where,
+        skip,
+        take: limit,
+
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              avatarUrl: true,
+            },
+          },
+
+          _count: {
+            select: {
+              likes: true,
+              comments: true,
+            },
           },
         },
-        _count: {
-          select: {
-            likes: true,
-            comments: true,
-          },
+
+        orderBy: {
+          createdAt: "desc",
         },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+      }),
+    ]);
 
     const userId = req.user?.id || null;
 
@@ -112,18 +155,32 @@ export const getVideos = async (req, res) => {
 
         return {
           ...video,
+          viewCount: video.views,
           likeCount: video._count.likes,
           commentCount: video._count.comments,
           isLiked,
           _count: undefined,
-        };
+          };
       })
     );
 
+    const totalPages = Math.ceil(totalVideos / limit);
+
     return res.status(200).json({
       success: true,
+
       count: videosWithStats.length,
+
       data: videosWithStats,
+
+      pagination: {
+        page,
+        limit,
+        totalVideos,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
     });
   } catch (error) {
     console.error("Get videos error:", error);
@@ -195,11 +252,12 @@ export const getVideoById = async (req, res) => {
     }
 
     const videoWithStats = {
-      ...video,
-      likeCount: video._count.likes,
-      commentCount: video._count.comments,
-      isLiked,
-      _count: undefined,
+  ...video,
+  viewCount: video.views,
+  likeCount: video._count.likes,
+  commentCount: video._count.comments,
+  isLiked,
+  _count: undefined,
     };
 
     return res.status(200).json({
@@ -362,6 +420,62 @@ export const updateVideo = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to update video",
+      error: error.message,
+    });
+  }
+};
+
+
+// POST /api/videos/:id/view
+export const addVideoView = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    if (Number.isNaN(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid video ID",
+      });
+    }
+
+    const video = await prisma.video.findUnique({
+      where: { id },
+    });
+
+    if (!video) {
+      return res.status(404).json({
+        success: false,
+        message: "Video not found",
+      });
+    }
+
+    const updatedVideo = await prisma.video.update({
+      where: { id },
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
+      select: {
+        id: true,
+        views: true,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Video view added",
+      data: {
+        videoId: updatedVideo.id,
+        viewCount: updatedVideo.views,
+      },
+    });
+  } catch (error) {
+    console.error("Add video view error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to add video view",
       error: error.message,
     });
   }
