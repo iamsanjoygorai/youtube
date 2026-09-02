@@ -42,9 +42,7 @@ export const verifyEmail = async (req, res) => {
     }
 
     const updatedUser = await prisma.user.update({
-      where: {
-        id: user.id,
-      },
+      where: { id: user.id },
       data: {
         emailVerified: true,
         emailVerificationToken: null,
