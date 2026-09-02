@@ -27,6 +27,7 @@ model User {
   likes         Like[]
   subscriptions Subscription[] @relation("UserSubscriptions")
   subscribers   Subscription[] @relation("UserSubscribers")
+  history       History[]
 }
 
 model Video {
@@ -45,9 +46,9 @@ model Video {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // keep your existing relations here
   comments Comment[]
   likes    Like[]
+  history  History[]
 }
 
 model Comment {
@@ -92,4 +93,18 @@ model Subscription {
   @@unique([subscriberId, creatorId])
   @@index([subscriberId])
   @@index([creatorId])
+}
+
+model History {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  videoId   Int
+  watchedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, videoId])
+  @@index([userId, watchedAt])
+  @@index([videoId])
 }
